@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>例子</title>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        li {
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>例子</h1>
+    <hr>
+    <div id="app">
+        <!-- 查询（筛选）订单 按品牌 -->
+        <p>品牌：<input type="text" v-model="newSearch"><button>查询</button></p>
+
+        <!-- 全部订单部分 -->
+        <ul>
+            <li v-for='(good,index) in goods'>
+                <!-- 一条订单信息 -->
+                <span>
+                    <!-- 商品品牌 -->
+                    <span>
+                        {{good.brand}}
+                    </span>
+                    <!-- 订单日期 -->
+                    <span>
+                        {{good.ordate}}
+                    </span>
+                    <!-- 订单价格 -->
+                    <span>
+                        {{good.price * good.number}}
+                        <!-- {{good.orderprice}} -->
+                    </span>
+                    <!-- 购买数量 -->
+                    <span>
+                        <button @click='add(index)'>+</button>
+                        {{good.number}}
+                        <button @click='sub(index)'>-</button>
+                    </span>
+                    <!-- 删除 -->
+                    <button @click='deletegood'>删除</button>
+                </span>
+            </li>
+        </ul>
+        <span>订单总额：{{totalmoney}}元</span><br>
+        <button @click='total'>计算</button>
+
+        <!-- 新增订单 -->
+        <h4>新增订单</h4>
+        <p>
+            品牌：
+            <input type="text" v-model="newBrand">
+        </p>
+        <p>
+            价格：
+            <input type="text" v-model="newPrice">
+        </p>
+        <p>
+            数量：
+            <input type="text" v-model="newNum">
+        </p>
+        <button @click='addOrder'>提交</button>
+    </div>
+    <script>
+        // function add(index) {
+        //     // this.goods[index].number++;
+        //     Vue.set(vm.goods[index], number, number++);
+
+        // };
+        // function sub(index) {
+        //     // this.goods[index].number--;
+        //     Vue.set(vm.goods[index], number, number--);
+        // };
+        let app = new Vue({
+            el: '#app',
+            data: {
+                newBrand: '',
+                newPrice: null,
+                newNum: null,
+                newSearch: null,
+                goods: [
+                    {
+                        brand: '苹果',
+                        ordate: '2018-01-02',
+                        price: '20',
+                        number: 20,
+                        // orderprice: 0
+                    },
+                    {
+                        brand: '华为',
+                        ordate: '2018-06-08',
+                        price: '10',
+                        number: 30,
+                        // orderprice: 0
+                    },
+                    {
+                        brand: '小米',
+                        ordate: '2019-11-02',
+                        price: '20',
+                        number: 40,
+                        // orderprice: 0
+                    },
+                ],
+                totalmoney: 0
+            },
+            created() {
+                let totalmoney = 0;
+                for (good of this.goods) {
+                    totalmoney += good.price * good.number
+                    // this.orderprice = good.price * good.number;
+                }
+                this.totalmoney = totalmoney;
+            },
+            methods: {
+                // 计算订单总额
+                total: function () {
+                    let totalmoney = 0;
+                    for (good of this.goods) {
+                        totalmoney += good.price * good.number
+                    }
+                    this.totalmoney = totalmoney;
+                },
+                // 商品数量改变
+                add: function (index) {
+                    // this.goods[index].number++;
+                    Vue.set(app.goods[index],app.goods[index].number,app.goods[index].number++);
+
+                },
+                sub: function (index) {
+                    // this.goods[index].number--;
+                    Vue.set(app.goods[index],app.goods[index].number,app.goods[index].number--);
+                },
+                // 删除一条订单
+                deletegood: function (index) {
+                    this.goods.splice(index, 1);
+                },
+                // 新增一条订单
+                addOrder: function () {
+                    let good = {
+                        brand: this.newBrand,
+                        ordate: '2020-03-20',
+                        price: this.newPrice,
+                        number: this.newNum,
+                        // orderprice:this.newPrice*this.newNum
+                    };
+                    this.goods.push(good);
+                }
+            },
+            watch: {
+                goods: function () {
+                    let totalmoney = 0;
+                    if (this.goods.length == 0) {
+                        this.totalmoney = 0;
+                    } else {
+                        for (good of this.goods) {
+                            totalmoney += good.price * good.number
+                            // this.orderprice = good.price * good.number;
+                        }
+                        this.totalmoney = totalmoney;
+                    }
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>
