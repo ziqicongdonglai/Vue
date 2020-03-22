@@ -8,77 +8,203 @@
     <!-- 开发环境版本，包含了有帮助的命令行警告 -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        button {
+            border: 0;
+        }
+
         li {
             list-style: none;
         }
+
+        input {
+            border: 1px solid #d4d4d4;
+            border-radius: 3px;
+        }
+
+        /* 顶部 标题及搜索部分 */
+        #title {
+            background-color: #337ab7;
+            color: #f4f4f4;
+            line-height: 30px;
+            height: 30px;
+            padding-left: 10px;
+        }
+
+        #searchbox {
+            height: 60px;
+            border-bottom: 2px solid #337ab7;
+            padding-left: 20px;
+            padding-top: 10px;
+            box-sizing: border-box;
+        }
+
+        .basetitle {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .basebutton {
+            color: #f4f4f4;
+            background-color: #337ab7;
+            width: 55px;
+            height: 25px;
+            line-height: 25px;
+            border-radius: 10%;
+        }
+        #searchbox .basebutton {
+            margin-left: 50px;
+        }
+
+        /* 全部订单 */
+        #allorders {
+            margin: 15px;
+            float: left;
+            width: 62%;
+            box-sizing: border-box;
+        }
+
+        #ultitle {
+            width: 100%;
+        }
+
+        #ultitle span {
+            width: 20%;
+            display: block;
+            float: left;
+            text-align: center;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        #allorders ul {
+            width: 100%;
+        }
+        #allorders ul li {
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid #d4d4d4;
+        }
+        #allorders ul li>div span{
+            display: block;
+            width: 20%;
+            height: 30px;
+            line-height: 30px;
+            float: left;
+            text-align: center;
+        }
+        span .numberbutton {
+            width: 20px;
+            background-color: #fff;
+            border: 1px solid #d4d4d4;
+        }
+        span #deletebutton {
+            width: 40px;
+            background-color: #fff;
+            border: 1px solid #d4d4d4;
+        }
+
+        /* 新增订单部分 */
+        #addorder {
+            margin-top: 15px;
+            float: right;
+            width: 33.33%;
+        }
+
+        #addordertitle {
+            border-bottom: 1px solid #d4d4d4 ;
+        }
+
+        #addorder h4 {
+            font-weight: 400;
+        }
+        #addorder>div {
+            margin: 10px;
+            margin-left: 0;
+        }
+
+        #addorder>div input {
+            width: 100%;
+        }
+
     </style>
 </head>
 
 <body>
-    <h1>例子</h1>
-    <hr>
     <div id="app">
+        <div id="title">订单管理</div>
         <!-- 查询（筛选）订单 按品牌 -->
-        <p>品牌：<input type="text" v-model="newSearch"><button>查询</button></p>
+        <div id="searchbox">
+            <span class="basetitle">品牌：</span>
+            <input type="text" v-model="newSearch" placeholder="要搜索的品牌">
+            <button class="basebutton">查询</button>
+        </div>
 
         <!-- 全部订单部分 -->
-        <ul>
-            <li v-for='(good,index) in goods'>
-                <!-- 一条订单信息 -->
-                <span>
-                    <!-- 商品品牌 -->
-                    <span>
-                        {{good.brand}}
+        <div id="allorders">
+            <div id="ultitle">
+                <span class="basetitle">品牌</span>
+                <span class="basetitle">订单日期</span>
+                <span class="basetitle">订单价格</span>
+                <span class="basetitle">购买数量</span>
+                <span class="basetitle">操作</span>
+            </div>
+            <ul>
+                <li v-for='(good,index) in goods'>
+                    <!-- 一条订单信息 -->
+                    <div>
+                        <!-- 商品品牌 -->
+                        <span>
+                            {{good.brand}}
+                        </span>
+                        <!-- 订单日期 -->
+                        <span>
+                            {{good.ordate}}
+                        </span>
+                        <!-- 订单价格 -->
+                        <span>
+                            {{good.price * good.number}}
+                            <!-- {{good.orderprice}} -->
+                        </span>
+                        <!-- 购买数量 -->
+                        <span>
+                            <button @click='add(index)' class="numberbutton">+</button>
+                            {{good.number}}
+                            <button @click='sub(index)' class="numberbutton">-</button>
+                        </span>
+                        <!-- 删除 -->
+                        <span><button @click='deletegood' id="deletebutton">删除</button></span>
                     </span>
-                    <!-- 订单日期 -->
-                    <span>
-                        {{good.ordate}}
-                    </span>
-                    <!-- 订单价格 -->
-                    <span>
-                        {{good.price * good.number}}
-                        <!-- {{good.orderprice}} -->
-                    </span>
-                    <!-- 购买数量 -->
-                    <span>
-                        <button @click='add(index)'>+</button>
-                        {{good.number}}
-                        <button @click='sub(index)'>-</button>
-                    </span>
-                    <!-- 删除 -->
-                    <button @click='deletegood'>删除</button>
-                </span>
-            </li>
-        </ul>
-        <span>订单总额：{{totalmoney}}元</span><br>
-        <button @click='total'>计算</button>
+                </li>
+            </ul>
+            <span class="basetitle">订单总额：{{totalmoney}}元</span><br>
+            <!-- <button @click='total'>计算</button> -->
+        </div>
 
         <!-- 新增订单 -->
-        <h4>新增订单</h4>
-        <p>
-            品牌：
-            <input type="text" v-model="newBrand">
-        </p>
-        <p>
-            价格：
-            <input type="text" v-model="newPrice">
-        </p>
-        <p>
-            数量：
-            <input type="text" v-model="newNum">
-        </p>
-        <button @click='addOrder'>提交</button>
+        <div id="addorder">
+            <h4 id="addordertitle">新增订单</h4>
+            <div>
+                <div class="basetitle">品牌：</div>
+                <input type="text" v-model="newBrand" placeholder="如：华为，小米">
+            </div>
+            <div>
+                <div class="basetitle">价格：</div>
+                <input type="text" v-model="newPrice"  placeholder="如：50">
+            </div>
+            <div>
+                <div class="basetitle">数量：</div>
+                <input type="text" v-model="newNum" placeholder="如：3">
+            </div>
+            <button @click='addOrder' class="basebutton">提交</button>
+        </div>
     </div>
     <script>
-        // function add(index) {
-        //     // this.goods[index].number++;
-        //     Vue.set(vm.goods[index], number, number++);
-
-        // };
-        // function sub(index) {
-        //     // this.goods[index].number--;
-        //     Vue.set(vm.goods[index], number, number--);
-        // };
         let app = new Vue({
             el: '#app',
             data: {
@@ -86,29 +212,7 @@
                 newPrice: null,
                 newNum: null,
                 newSearch: null,
-                goods: [
-                    {
-                        brand: '苹果',
-                        ordate: '2018-01-02',
-                        price: '20',
-                        number: 20,
-                        // orderprice: 0
-                    },
-                    {
-                        brand: '华为',
-                        ordate: '2018-06-08',
-                        price: '10',
-                        number: 30,
-                        // orderprice: 0
-                    },
-                    {
-                        brand: '小米',
-                        ordate: '2019-11-02',
-                        price: '20',
-                        number: 40,
-                        // orderprice: 0
-                    },
-                ],
+                goods: [],
                 totalmoney: 0
             },
             created() {
@@ -120,23 +224,15 @@
                 this.totalmoney = totalmoney;
             },
             methods: {
-                // 计算订单总额
-                total: function () {
-                    let totalmoney = 0;
-                    for (good of this.goods) {
-                        totalmoney += good.price * good.number
-                    }
-                    this.totalmoney = totalmoney;
-                },
                 // 商品数量改变
                 add: function (index) {
                     // this.goods[index].number++;
-                    Vue.set(app.goods[index],app.goods[index].number,app.goods[index].number++);
+                    Vue.set(app.goods[index], app.goods[index].number, app.goods[index].number++);
 
                 },
                 sub: function (index) {
                     // this.goods[index].number--;
-                    Vue.set(app.goods[index],app.goods[index].number,app.goods[index].number--);
+                    Vue.set(app.goods[index], app.goods[index].number, app.goods[index].number--);
                 },
                 // 删除一条订单
                 deletegood: function (index) {
