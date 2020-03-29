@@ -56,6 +56,7 @@
             line-height: 25px;
             border-radius: 10%;
         }
+
         #searchbox .basebutton {
             margin-left: 50px;
         }
@@ -84,13 +85,15 @@
         #allorders ul {
             width: 100%;
         }
+
         #allorders ul li {
             width: 100%;
             height: 30px;
             line-height: 30px;
             border-bottom: 1px solid #d4d4d4;
         }
-        #allorders ul li>div span{
+
+        #allorders ul li>div span {
             display: block;
             width: 20%;
             height: 30px;
@@ -98,11 +101,13 @@
             float: left;
             text-align: center;
         }
+
         span .numberbutton {
             width: 20px;
             background-color: #fff;
             border: 1px solid #d4d4d4;
         }
+
         span #deletebutton {
             width: 40px;
             background-color: #fff;
@@ -117,12 +122,13 @@
         }
 
         #addordertitle {
-            border-bottom: 1px solid #d4d4d4 ;
+            border-bottom: 1px solid #d4d4d4;
         }
 
         #addorder h4 {
             font-weight: 400;
         }
+
         #addorder>div {
             margin: 10px;
             margin-left: 0;
@@ -131,21 +137,12 @@
         #addorder>div input {
             width: 100%;
         }
-
     </style>
 </head>
 
 <body>
     <div id="app">
-        <div id="title">订单管理</div>
-        <!-- 查询（筛选）订单 按品牌 -->
-        <div id="searchbox">
-            <span class="basetitle">品牌：</span>
-            <input type="text" v-model="newSearch" placeholder="要搜索的品牌">
-            <button class="basebutton">查询</button>
-        </div>
-
-        <!-- 全部订单部分 -->
+        <order-header></order-header>
         <div id="allorders">
             <div id="ultitle">
                 <span class="basetitle">品牌</span>
@@ -155,38 +152,55 @@
                 <span class="basetitle">操作</span>
             </div>
             <ul>
-                <li v-for='(good,index) in goods'>
-                    <!-- 一条订单信息 -->
-                    <div>
-                        <!-- 商品品牌 -->
-                        <span>
-                            {{good.brand}}
-                        </span>
-                        <!-- 订单日期 -->
-                        <span>
-                            {{good.ordate}}
-                        </span>
-                        <!-- 订单价格 -->
-                        <span>
-                            {{good.price * good.number}}
-                            <!-- {{good.orderprice}} -->
-                        </span>
-                        <!-- 购买数量 -->
-                        <span>
-                            <button @click='add(index)' class="numberbutton">+</button>
-                            {{good.number}}
-                            <button @click='sub(index)' class="numberbutton">-</button>
-                        </span>
-                        <!-- 删除 -->
-                        <span><button @click='deletegood' id="deletebutton">删除</button></span>
-                    </span>
+                <li v-for="(good, index) of goods">
+                    <order-list :good='good' :index='index' @number-add='addnum' @number-sub='subnum'
+                        @orderlist-delete='deletegood'></order-list>
                 </li>
             </ul>
             <span class="basetitle">订单总额：{{totalmoney}}元</span><br>
-            <!-- <button @click='total'>计算</button> -->
+        </div>
+        <add-order @addorder-list='addOrder'></add-order>
+    </div>
+
+
+
+    <!-- 订单管理顶部 -->
+    <template id="order-header">
+        <div>
+            <div id="title">订单管理</div>
+            <div id="searchbox">
+                <span class="basetitle">品牌：</span>
+                <input type="text" placeholder="要搜索的品牌">
+                <button class="basebutton">查询</button>
+            </div>
         </div>
 
-        <!-- 新增订单 -->
+    </template>
+
+    <!-- 全部订单 -->
+    <template id="order-items">
+        <div>
+            <span>
+                {{good.brand}}
+            </span>
+            <span>
+                {{good.ordate}}
+            </span>
+            <span>
+                {{good.price * good.number}}
+            </span>
+            <span>
+                <button @click='add()' class="numberbutton">+</button>
+                {{good.number}}
+                <button @click='sub()' class="numberbutton">-</button>
+            </span>
+            <span><button @click='deleteorder()' id="deletebutton">删除</button></span>
+            </span>
+        </div>
+    </template>
+
+    <!-- 新增订单 -->
+    <template id="addorderlist">
         <div id="addorder">
             <h4 id="addordertitle">新增订单</h4>
             <div>
@@ -195,7 +209,7 @@
             </div>
             <div>
                 <div class="basetitle">价格：</div>
-                <input type="text" v-model="newPrice"  placeholder="如：50">
+                <input type="text" v-model="newPrice" placeholder="如：50">
             </div>
             <div>
                 <div class="basetitle">数量：</div>
@@ -203,8 +217,75 @@
             </div>
             <button @click='addOrder' class="basebutton">提交</button>
         </div>
-    </div>
+    </template>
+
+
     <script>
+        // 订单管理顶部
+        let orderheader = {
+            template: '#order-header'
+        }
+
+        // 全部订单
+        let orderlist = {
+            data: function () {
+                return {
+                    corderitem: {
+                        brand: '小米台灯',
+                        ordate: '2020-03-29',
+                        price: 500,
+                        number: 2
+                    },
+                    totalmoney: 0
+                }
+            },
+            props: ['index', 'good'],
+            template: '#order-items',
+            mounted: function () {
+                this.corderitem.brand = this.good.brand;
+                this.corderitem.ordate = this.good.ordate;
+                this.corderitem.price = this.good.price;
+                this.corderitem.number = this.good.number;
+            },
+            methods: {
+                add() {
+                    this.corderitem.number++
+                    this.$emit('number-add', this.index)
+                },
+                sub() {
+                    if (this.corderitem.number > 0) {
+                        this.corderitem.number--;
+                        this.$emit('number-sub', this.index)
+                    } else {
+                        alert('不能再减少了');
+                    }
+                },
+                deleteorder() {
+                    this.$emit('orderlist-delete', this.index);
+                }
+            }
+        }
+
+        // 新增订单
+        let addorder = {
+            data: function () {
+                return {
+                    newBrand: '',
+                    newPrice: null,
+                    newNum: null,
+                    newSearch: null,
+                }
+            },
+            template: '#addorderlist',
+            methods: {
+                addOrder: function () {
+                    this.$emit('addorder-list');
+                }
+            }
+        }
+
+
+        // const 
         let app = new Vue({
             el: '#app',
             data: {
@@ -212,8 +293,14 @@
                 newPrice: null,
                 newNum: null,
                 newSearch: null,
-                goods: [],
-                totalmoney: 0
+                goods: [
+                    {
+                        brand: '小米台灯',
+                        ordate: '2020-03-29',
+                        price: 500,
+                        number: 2
+                    }
+                ]
             },
             created() {
                 let totalmoney = 0;
@@ -225,12 +312,12 @@
             },
             methods: {
                 // 商品数量改变
-                add: function (index) {
+                addnum: function (index) {
                     // this.goods[index].number++;
                     Vue.set(app.goods[index], app.goods[index].number, app.goods[index].number++);
 
                 },
-                sub: function (index) {
+                subnum: function (index) {
                     // this.goods[index].number--;
                     Vue.set(app.goods[index], app.goods[index].number, app.goods[index].number--);
                 },
@@ -242,13 +329,18 @@
                 addOrder: function () {
                     let good = {
                         brand: this.newBrand,
-                        ordate: '2020-03-20',
+                        ordate: '2020-03-29',
                         price: this.newPrice,
                         number: this.newNum,
                         // orderprice:this.newPrice*this.newNum
                     };
                     this.goods.push(good);
                 }
+            },
+            components: {
+                'order-header': orderheader,
+                'order-list': orderlist,
+                'add-order': addorder
             },
             watch: {
                 goods: function () {
@@ -263,7 +355,7 @@
                         this.totalmoney = totalmoney;
                     }
                 }
-            },
+            }
         });
     </script>
 </body>
