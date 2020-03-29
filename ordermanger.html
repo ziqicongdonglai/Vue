@@ -279,7 +279,12 @@
             template: '#addorderlist',
             methods: {
                 addOrder: function () {
-                    this.$emit('addorder-list');
+                    this.$emit('addorder-list', {
+                        brand: this.newBrand,
+                        ordate: '2020-03-29',
+                        price: this.newPrice,
+                        number: this.newNum,
+                    });
                 }
             }
         }
@@ -289,10 +294,10 @@
         let app = new Vue({
             el: '#app',
             data: {
-                newBrand: '',
-                newPrice: null,
-                newNum: null,
-                newSearch: null,
+                // newBrand: '',
+                // newPrice: null,
+                // newNum: null,
+                // newSearch: null,
                 goods: [
                     {
                         brand: '小米台灯',
@@ -326,15 +331,15 @@
                     this.goods.splice(index, 1);
                 },
                 // 新增一条订单
-                addOrder: function () {
-                    let good = {
-                        brand: this.newBrand,
-                        ordate: '2020-03-29',
-                        price: this.newPrice,
-                        number: this.newNum,
-                        // orderprice:this.newPrice*this.newNum
-                    };
-                    this.goods.push(good);
+                addOrder: function (data) {
+                    // let good = {
+                    //     brand: this.newBrand,
+                    //     ordate: '2020-03-29',
+                    //     price: this.newPrice,
+                    //     number: this.newNum,
+                    //     // orderprice:this.newPrice*this.newNum
+                    // };
+                    this.goods.push(data);
                 }
             },
             components: {
