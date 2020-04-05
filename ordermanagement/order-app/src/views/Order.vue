@@ -1,7 +1,7 @@
 <template>
   <div class>
     <!-- 顶部 -->
-    <order-header></order-header>
+    <order-header @searchOrder-list="goods"></order-header>
 
     <!-- 全部订单列表 -->
     <div id="allorders">
@@ -84,13 +84,42 @@ export default {
     },
     // 删除一条订单
     deletegood: function(index) {
-      this.goods.splice(index, 1);
+      let i = index+1;
+      this.axios.delete('http://localhost:8080/order/' + i)
+      .then(ret => {
+        console.log(ret.data);
+         this.goods.splice(index, 1);
+      })
     },
     // 新增一条订单
     addOrder: function(data) {
-      this.goods.push(data);
+      this.axios.post('http://localhost:8080/order', data)
+      .then(ret => {
+         console.log(ret);
+      })
+      // this.goods.push(data);
+    },
+     searchGoods: function(data) {
+      let sres = data;
+      // console.log(data);
+      if (typeof sres == "") {
+        return this.goods;
+      } else {
+        return this.goods.filter(good => !good.goodName.indexOf(sres))
+      }
     }
   },
+  // computed: {
+  //   searchGoods: function(data) {
+  //     let sres = data;
+  //     // console.log(data);
+  //     if (typeof sres == "") {
+  //       return this.goods;
+  //     } else {
+  //       return this.goods.filter(good => !good.goodName.indexOf(sres))
+  //     }
+  //   }
+  // },
   watch: {
     goods: function(good) {
       let totalmoney = 0;

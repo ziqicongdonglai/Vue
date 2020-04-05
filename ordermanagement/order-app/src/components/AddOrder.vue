@@ -24,8 +24,7 @@ export default {
     return {
       newName: "",
       newPrice: null,
-      newNum: 0,
-      newSearch: null
+      newNum: null
     }
   },
   methods: {
