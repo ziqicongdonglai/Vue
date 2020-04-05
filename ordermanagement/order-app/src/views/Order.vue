@@ -1,14 +1,6 @@
 <template>
   <div class>
     <!-- 顶部 -->
-    <!-- <div>
-      <div id="title">订单管理</div>
-      <div id="searchbox">
-        <span class="basetitle">品牌：</span>
-        <input type="text" placeholder="要搜索的品牌" />
-        <button class="basebutton">查询</button>
-      </div>
-    </div>-->
     <order-header></order-header>
 
     <!-- 全部订单列表 -->
@@ -21,55 +13,97 @@
         <span class="basetitle">操作</span>
       </div>
       <ul>
-        <li v-for="(item, index) in orders" :key="index">
-          <div>
-            <span>{{item.goodName}}</span>
-            <span>{{item.createTime}}</span>
-            <span>{{item.goodPrice * item.goodNumber}}</span>
-            <span>
-              <button class="numberbutton">+</button>
-              {{item.goodNumber}}
-              <button class="numberbutton">-</button>
-            </span>
-            <span>
-              <button id="deletebutton">删除</button>
-            </span>
-          </div>
+        <li v-for="(good, index) in goods" :key="index">
+          <order-list
+            :good="good"
+            :index="index"
+            @number-add="addnum"
+            @number-sub="subnum"
+            @orderlist-delete="deletegood"
+          ></order-list>
         </li>
       </ul>
       <span class="basetitle">订单总额：{{totalmoney}}元</span>
     </div>
 
     <!-- 新增订单 -->
-    <add-order></add-order>
+    <add-order @addorder-list="addOrder"></add-order>
   </div>
 </template>
 
 <script>
 import OrderHeader from "@/components/OrderHeader.vue";
-// import OrderList from '@/components/OrderList.vue'
+import OrderList from "@/components/OrderList.vue";
 import AddOrder from "@/components/AddOrder.vue";
 export default {
   name: "Order",
   data() {
     return {
-      orders: [],
-      totalmoney: 0
+      goods: [],
+      // totalmoney: 0
       //   newName: "",
       //   newPrice: null,
       //   newNum: null
+      // totalmoney: 0
+      totalmoney: 0
     };
   },
   components: {
     OrderHeader,
-    //   OrderList,
+    OrderList,
     AddOrder
   },
-  created() {
+  created(good) {
     this.axios.get("http://localhost:8080/order").then(res => {
       console.log(res.data);
-      this.orders = res.data;
+      this.goods = res.data;
+      let totalmoney = 0;
+      for (good of this.goods) {
+        totalmoney += good.goodPrice * good.goodNumber;
+      }
+      this.goodsMoney = totalmoney;
     });
+  },
+  methods: {
+    // 商品数量改变
+    addnum: function(index) {
+      // this.goods[index].number++;
+      this.$set(
+        this.goods[index],
+        this.goods[index].goodNumber,
+        this.goods[index].goodNumber++
+      );
+    },
+    subnum: function(index) {
+      // this.goods[index].number--;
+      this.$set(
+        this.goods[index],
+        this.goods[index].goodNumber,
+        this.goods[index].goodNumber--
+      );
+    },
+    // 删除一条订单
+    deletegood: function(index) {
+      this.goods.splice(index, 1);
+    },
+    // 新增一条订单
+    addOrder: function(data) {
+      this.goods.push(data);
+    }
+  },
+  watch: {
+    goods: function(good) {
+      let totalmoney = 0;
+      if (this.goods.length == 0) {
+        this.totalmoney = 0;
+      } else {
+        for (good of this.goods) {
+          totalmoney += good.goodPrice * good.goodNumber;
+          // this.orderprice = good.price * good.number;
+        }
+        this.totalmoney = totalmoney;
+      }
+    }
   }
 };
 </script>
