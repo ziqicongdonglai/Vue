@@ -4,6 +4,7 @@ import com.example.order.api.eneity.Order;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -46,8 +47,8 @@ public interface OrderMapper {
     void delete(Integer id);
 
     //貌似订单没有更新这一说
-//    @Update("UPDATE order SET ")
-//    int update(Order order);
+    @Update("UPDATE t_order SET good_name=#{goodName},create_time=#{createTime},good_price=#{goodPrice},good_number=#{goodNumber} WHERE ord_id=#{ordId}")
+    Order update(Order order);
 
     //貌似也没有批量插入
 //    @Insert("INSERT INTO order")

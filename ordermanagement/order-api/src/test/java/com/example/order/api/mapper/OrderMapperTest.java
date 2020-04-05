@@ -39,4 +39,12 @@ class OrderMapperTest {
     @Test
     void delete() {
     }
+
+    @Test
+    void update() {
+        Order byId = orderMapper.findById(6);
+        byId.setGoodPrice(3000.0);
+        Order update = orderMapper.update(byId);
+        System.out.println(update);
+    }
 }

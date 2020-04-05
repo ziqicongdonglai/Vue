@@ -1,5 +1,5 @@
-drop table if exists order;
-create table order(
+drop table if exists t_order;
+create table t_order(
 ord_id int not null auto_increment,
 good_name varchar(20) not null,
 create_time datetime not null,

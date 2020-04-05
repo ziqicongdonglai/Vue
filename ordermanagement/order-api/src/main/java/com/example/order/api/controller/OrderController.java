@@ -34,6 +34,12 @@ public class OrderController {
         return ResponseEntity.ok(ord);
     }
 
+    @PutMapping("/order")
+    public ResponseEntity<Order> modify(@RequestBody Order order) {
+        Order ord = this.orderService.update(order);
+        return ResponseEntity.ok(ord);
+    }
+
     @GetMapping("/order/{id}")
     public ResponseEntity<Order> get(@PathVariable("id") Integer id) {
         Order ord = this.orderService.findById(id);

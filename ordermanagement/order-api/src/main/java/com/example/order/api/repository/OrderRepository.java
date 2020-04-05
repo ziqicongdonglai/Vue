@@ -18,7 +18,7 @@ public interface OrderRepository {
 
     void delete(Integer id);
 
-//    Order update(Order order);
+    Order update(Order order);
 //
 //    int[] batchInsert(List<Order> orders);
 

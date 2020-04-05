@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author ke_zhang
@@ -17,6 +18,9 @@ import java.util.List;
 public class OrderRepositoryImpl implements OrderRepository {
     @Resource
     private OrderMapper orderMapper;
+
+    //存储Message的数据
+    private final ConcurrentHashMap<Integer, Order> ords = new ConcurrentHashMap<>();
 
     @Override
     public List<Order> findAll() {
@@ -38,12 +42,12 @@ public class OrderRepositoryImpl implements OrderRepository {
         orderMapper.delete(id);
     }
 
+    @Override
+    public Order update(Order order) {
+        this.ords.put(order.getOrdId(), order);
+        return order;
+    }
 
-//    @Override
-//    public int update(Order order) {
-//        return 0;
-//    }
-//
 //    @Override
 //    public int[] batchInsert(List<Order> orders) {
 //        return new int[0];
