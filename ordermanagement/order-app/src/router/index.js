@@ -8,8 +8,12 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    redirect: '/order'
+  },
+  {
+    path: '/home',
     name: 'Home',
-    component: Home
+    component: () => import('../views/Home')
   },
   {
     path: '/about',
@@ -22,7 +26,7 @@ const routes = [
   {
     path: '/order',
     name: 'Order',
-    component: () => import('../views/Order')
+    component: Order
   }
 ]
 

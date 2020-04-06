@@ -9,7 +9,10 @@
       <button @click="sub()" class="numberbutton">-</button>
     </span>
     <span>
-      <button @click="deleteorder()" id="deletebutton">删除</button>
+      <!-- <button @click="deleteorder()" id="deletebutton" style="border:0"><i class="el-icon-delete"></i></button> -->
+      <button @click="deleteorder()" id="deletebutton" style="border:0">
+        <i class="el-icon-delete"></i>
+      </button>
     </span>
   </div>
 </template>
@@ -50,7 +53,29 @@ export default {
     },
     deleteorder() {
       this.$emit("orderlist-delete", this.index);
-    }
+      console.log("组件中的index" + this.index);
+    },
+    // deleteorder() {
+    //   this.$confirm("此操作将永久删除该条记录, 是否继续?", "提示", {
+    //     confirmButtonText: "确定",
+    //     cancelButtonText: "取消",
+    //     type: "warning"
+    //   })
+    //     .then(() => {
+    //       this.$emit("orderlist-delete", this.index);
+    //       console.log("then中的"+ this.index);
+    //       this.$message({
+    //         type: "success",
+    //         message: "删除成功!",
+    //       });
+    //     })
+    //     .catch(() => {
+    //       this.$message({
+    //         type: "info",
+    //         message: "已取消删除"
+    //       });
+    //     });
+    // }
   }
 };
 </script>

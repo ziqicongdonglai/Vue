@@ -40,11 +40,6 @@ export default {
   data() {
     return {
       goods: [],
-      // totalmoney: 0
-      //   newName: "",
-      //   newPrice: null,
-      //   newNum: null
-      // totalmoney: 0
       totalmoney: 0
     };
   },
@@ -84,8 +79,10 @@ export default {
     },
     // 删除一条订单
     deletegood: function(index) {
-      let i = index+1;
-      this.axios.delete('http://localhost:8080/order/' + i)
+      console.log("Order里的index" + index);
+      console.log("index的good" + this.goods[index]);
+      let oId = this.goods[index].ordId;
+      this.axios.delete('http://localhost:8080/order/' + oId)
       .then(ret => {
         console.log(ret.data);
          this.goods.splice(index, 1);
@@ -93,21 +90,21 @@ export default {
     },
     // 新增一条订单
     addOrder: function(data) {
-      this.axios.post('http://localhost:8080/order', data)
-      .then(ret => {
-         console.log(ret);
-      })
-      // this.goods.push(data);
-    },
-     searchGoods: function(data) {
-      let sres = data;
-      // console.log(data);
-      if (typeof sres == "") {
-        return this.goods;
-      } else {
-        return this.goods.filter(good => !good.goodName.indexOf(sres))
-      }
+      // 因为后端插入语句有问题 所以 把push写在外面
+      this.goods.push(data);
+      this.axios.post("http://localhost:8080/order", data).then(ret => {
+        console.log(ret);
+      });
     }
+    //  searchGoods: function(data) {
+    //   let sres = data;
+    //   // console.log(data);
+    //   if (typeof sres == "") {
+    //     return this.goods;
+    //   } else {
+    //     return this.goods.filter(good => !good.goodName.indexOf(sres))
+    //   }
+    // }
   },
   // computed: {
   //   searchGoods: function(data) {
@@ -146,6 +143,7 @@ export default {
 
 button {
   border: 0;
+  cursor: pointer;
 }
 
 li {
@@ -185,11 +183,14 @@ input {
   width: 55px;
   height: 25px;
   line-height: 25px;
+  text-align: center;
   border-radius: 10%;
 }
 
-#searchbox .basebutton {
-  margin-left: 50px;
+#searchbox {
+  .basebutton {
+    margin-left: 50px;
+  }
 }
 
 /* 全部订单 */
@@ -198,74 +199,64 @@ input {
   float: left;
   width: 62%;
   box-sizing: border-box;
-}
-
-#ultitle {
-  width: 100%;
-}
-
-#ultitle span {
-  width: 20%;
-  display: block;
-  float: left;
-  text-align: center;
-  height: 30px;
-  line-height: 30px;
-}
-
-#allorders ul {
-  width: 100%;
-}
-
-#allorders ul li {
-  width: 100%;
-  height: 30px;
-  line-height: 30px;
-  border-bottom: 1px solid #d4d4d4;
-}
-
-#allorders ul li > div span {
-  display: block;
-  width: 20%;
-  height: 30px;
-  line-height: 30px;
-  float: left;
-  text-align: center;
-}
-
-span .numberbutton {
-  width: 20px;
-  background-color: #fff;
-  border: 1px solid #d4d4d4;
-}
-
-span #deletebutton {
-  width: 40px;
-  background-color: #fff;
-  border: 1px solid #d4d4d4;
+  #ultitle {
+    width: 100%;
+    span {
+      width: 20%;
+      display: block;
+      float: left;
+      text-align: center;
+      height: 30px;
+      line-height: 30px;
+    }
+  }
+  ul {
+    width: 100%;
+    li {
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #d4d4d4;
+      & > div {
+        span {
+          display: block;
+          width: 20%;
+          height: 30px;
+          line-height: 30px;
+          float: left;
+          text-align: center;
+          .numberbutton {
+            width: 20px;
+            background-color: #fff;
+            border: 1px solid #d4d4d4;
+          }
+          #deletebutton {
+            width: 40px;
+            background-color: #fff;
+            border: 1px solid #d4d4d4;
+          }
+        }
+      }
+    }
+  }
 }
 
 /* 新增订单部分 */
 #addorder {
-  margin-top: 15px;
+  margin-top: 24px;
   float: right;
   width: 33.33%;
-}
-
-#addordertitle {
-  border-bottom: 1px solid #d4d4d4;
-}
-
-#addorder h4 {
-  font-weight: 400;
-}
-
-#addorder > div {
-  margin: 10px;
-  margin-left: 0;
-}
-
-#addorder > div input {
-  width: 100%;
+  #addordertitle {
+    border-bottom: 1px solid #d4d4d4;
+    font-weight: 400;
+  }
+  & > div {
+    margin: 10px;
+    margin-left: 0;
+    input {
+      width: 100%;
+    }
+  }
 }
 </style>
